@@ -1,0 +1,17 @@
+create or replace PACKAGE music_pack AS
+procedure updateMusic(p_title IN music.title%TYPE,
+       p_artist IN music.artist%TYPE,
+       p_genre IN music.genre%TYPE,
+       p_year IN music.year%TYPE);
+procedure insertMusic(p_id IN music.ID%TYPE,
+       p_title IN music.title%TYPE,
+       p_artist IN music.artist%TYPE,
+       p_genre IN music.genre%TYPE,
+       p_year IN music.year%TYPE);
+procedure deleteMusic(p_title music.title%TYPE);
+end;
+
+create or replace PACKAGE collection_pack AS
+procedure collection_proc_1;
+procedure collection_proc_2;
+end;

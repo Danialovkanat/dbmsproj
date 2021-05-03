@@ -1,0 +1,104 @@
+PROCEDURES
+
+CREATE OR REPLACE PROCEDURE insertMusic(
+       p_title IN music.title%TYPE,
+       p_artist IN music.artist%TYPE,
+       p_genre IN music.genre%TYPE,
+       p_year IN music.year%TYPE)
+IS
+BEGIN
+
+   INSERT INTO music (title, artist, genre , year) 
+  VALUES (p_title,p_artist, p_genre , p_year);
+
+  COMMIT;
+
+END;
+
+
+create or replace PROCEDURE deleteMusic(p_title music.title%TYPE) AS
+
+    BEGIN
+       DELETE FROM music
+       WHERE title = p_title;
+    END;
+
+
+create or replace PROCEDURE updateMusic(
+       p_id IN music.ID%TYPE,
+       p_title IN music.title%TYPE,
+       p_artist IN music.artist%TYPE,
+       p_genre IN music.genre%TYPE,
+       p_year IN music.year%TYPE)
+IS
+BEGIN
+
+  UPDATE music SET title = p_title where ID = p_id;
+  UPDATE music SET artist = p_artist where ID = p_id;
+  UPDATE music SET genre = p_genre where ID = p_id;
+  UPDATE music SET year = p_year where ID = p_id;
+  COMMIT;
+
+END;
+
+create or replace procedure collection_proc_2 as
+    v_res varchar2(4000);
+begin
+    v_res := 'DECLARE
+    CURSOR curs IS
+        select * from music
+        where genre like ''%dance pop%''
+        and year between 2010 and 2021;
+
+    v_cnt numeric := 1;
+    TYPE t_music IS TABLE OF curs%rowtype
+    INDEX BY BINARY_INTEGER;
+    v_music_tab t_music;
+BEGIN
+    FOR v_rec IN curs LOOP
+        v_music_tab(v_cnt) := v_rec;
+        v_cnt := v_cnt + 1;
+    END LOOP;
+
+    FOR i IN v_music_tab.FIRST..v_music_tab.LAST LOOP
+        IF v_music_tab.EXISTS(i) THEN
+
+            insert into musicCollection2
+            values(v_music_tab(i).id, v_music_tab(i).title, v_music_tab(i).artist,
+            v_music_tab(i).genre,v_music_tab(i).year);
+        END IF;
+    END LOOP;
+END;';
+    EXECUTE IMMEDIATE v_res;
+end;
+
+create or replace procedure collection_proc_1 as
+    v_res varchar2(4000);
+begin 
+    v_res := 'DECLARE
+    CURSOR curs IS
+        SELECT * FROM music
+        where artist like ''%Lady Gaga%''
+        and genre like ''%dance pop%'';
+
+    v_cnt numeric := 1;
+    TYPE t_music IS TABLE OF curs%rowtype
+    INDEX BY BINARY_INTEGER;
+    v_music_tab t_music;
+BEGIN
+    FOR v_rec IN curs LOOP
+        v_music_tab(v_cnt) := v_rec;
+        v_cnt := v_cnt + 1;
+    END LOOP;
+
+    FOR i IN v_music_tab.FIRST..v_music_tab.LAST LOOP
+        IF v_music_tab.EXISTS(i) THEN
+
+            insert into musicCollection1
+            values(v_music_tab(i).id, v_music_tab(i).title, v_music_tab(i).artist,
+            v_music_tab(i).genre,v_music_tab(i).year);
+        END IF;
+    END LOOP;
+END;';
+    EXECUTE IMMEDIATE v_res;
+end;

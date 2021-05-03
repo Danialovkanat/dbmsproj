@@ -1,0 +1,27 @@
+TRIGGER
+
+CREATE OR REPLACE TRIGGER "SYSTEM"."MUSIC_LOG_INSERT" 
+AFTER INSERT ON music
+FOR EACH ROW
+BEGIN 
+INSERT INTO music_log(id, operation_date, old_id, new_id, old_title, new_title,old_artist,new_artist,old_genre,new_genre,old_year,new_year,action)
+VALUES(:NEW.id, SYSDATE, :OLD.id, :NEW.id, :OLD.title, :NEW.title,:OLD.artist,:NEW.artist,:OLD.genre,:NEW.genre,:OLD.year,:NEW.year, 'INSERT');
+end;
+
+
+CREATE OR REPLACE TRIGGER "SYSTEM"."MUSIC_LOG_UPDATE" 
+AFTER UPDATE ON music
+FOR EACH ROW
+BEGIN 
+INSERT INTO music_log(id, operation_date, old_id, new_id, old_title, new_title,old_artist,new_artist,old_genre,new_genre,old_year,new_year,action)
+VALUES(:NEW.id, SYSDATE, :OLD.id, :NEW.id, :OLD.title, :NEW.title,:OLD.artist,:NEW.artist,:OLD.genre,:NEW.genre,:OLD.year,:NEW.year, 'UPDATE');
+end;
+
+
+CREATE OR REPLACE TRIGGER "SYSTEM"."MUSIC_LOG_DELETE" 
+AFTER DELETE ON music
+FOR EACH ROW
+BEGIN 
+INSERT INTO music_log(id, operation_date, old_id, new_id, old_title, new_title,old_artist,new_artist,old_genre,new_genre,old_year,new_year,action)
+VALUES(:NEW.id, SYSDATE, :OLD.id, :NEW.id, :OLD.title, :NEW.title,:OLD.artist,:NEW.artist,:OLD.genre,:NEW.genre,:OLD.year,:NEW.year, 'DELETION');
+end;
